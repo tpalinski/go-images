@@ -7,6 +7,14 @@ services:
       - "5672:5672"
     networks:
       - images
+  producer:
+    build: ./mock-producer
+    ports:
+      - "2137:2137"
+    networks:
+      - images
+    environment:
+      - RABBIT_ADDR=rabbitmq
 
 networks:
   images:
