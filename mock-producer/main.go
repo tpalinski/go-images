@@ -3,6 +3,7 @@ package main
 import (
 	imgloader "mock-producer/img_loader"
 	"mock-producer/rabbit"
+	"mock-producer/server"
 	"mock-producer/utils"
 
 	log "github.com/sirupsen/logrus"
@@ -21,6 +22,6 @@ func main() {
 	log.Info("Image loaded.")
 	rabbit.InitRabbitConnection(RETRIES, TIMEOUT)
 	log.Info("Starting sending messages")
-	rabbit.SendMessage(deser);
+	server.StartWebServer(deser);
 	rabbit.CloseConnection()
 }
