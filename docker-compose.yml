@@ -1,0 +1,12 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: go-images-rabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    networks:
+      - images
+
+networks:
+  images:
