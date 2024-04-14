@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"os"
 	"time"
+	"transformer/filesystem"
+	"transformer/messages"
+	"transformer/processing"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/proto"
 )
 
 var connection *amqp.Connection;
@@ -17,13 +21,19 @@ type RabbitHandler interface {
 
 type DefaultHandler struct {}
 
-func (handler *DefaultHandler) OnMessage(amqp.Delivery) error {
+func (handler *DefaultHandler) OnMessage(msg amqp.Delivery) error {
 	start := time.Now();
-	// TODO - process image
-	time.Sleep(time.Second);
-
+	body := msg.Body;
+	image := &messages.ImageMessage {}
+	err := proto.Unmarshal(body, image);
+	if err != nil {
+		log.Errorf("Error while serializing message: %s", err)
+		return err
+	}
+	img, err := processing.ProcessImage(image);
+	filesystem.SaveImage(img, image.Name)
 	elapsed := time.Now().Sub(start);
-	log.Infof("Processed image in: %dms", elapsed.Milliseconds())
+	log.Infof("Processed image: %s in: %dms", image.GetName() ,elapsed.Milliseconds())
 
 	return nil
 }
