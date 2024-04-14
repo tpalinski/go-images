@@ -8,4 +8,7 @@ require (
 	google.golang.org/protobuf v1.33.0
 )
 
-require golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+require (
+	github.com/bxcodec/faker v2.0.1+incompatible // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
+)
