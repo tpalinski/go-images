@@ -4,7 +4,6 @@ services:
     container_name: go-images-rabbitmq
     ports:
       - "15672:15672"
-      - "5672:5672"
     networks:
       - images
   producer:
@@ -15,6 +14,14 @@ services:
       - images
     environment:
       - RABBIT_ADDR=rabbitmq
+  transformer:
+    build: ./transformer
+    networks:
+      - images
+    environment:
+      - RABBIT_ADDR=rabbitmq
+    volumes:
+      - ./transformer_data:/app/data
 
 networks:
   images:

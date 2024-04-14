@@ -19,3 +19,6 @@
 
 # Go workspace file
 go.work
+
+# Transformer output dir
+transformer_data
