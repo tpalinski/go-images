@@ -15,7 +15,20 @@ type RabbitHandler interface {
 	OnMessage(amqp.Delivery) error
 }
 
-func InitRabbitConnection(retries int, timeout int, handler *RabbitHandler) error {
+type DefaultHandler struct {}
+
+func (handler *DefaultHandler) OnMessage(amqp.Delivery) error {
+	start := time.Now();
+	// TODO - process image
+	time.Sleep(time.Second);
+
+	elapsed := time.Now().Sub(start);
+	log.Infof("Processed image in: %dms", elapsed.Milliseconds())
+
+	return nil
+}
+
+func InitRabbitConnection(retries int, timeout int, handler RabbitHandler) error {
 	rabit_addr, ok := os.LookupEnv("RABBIT_ADDR")
 	if !ok {
 		rabit_addr = "localhost"
@@ -56,7 +69,7 @@ func InitRabbitConnection(retries int, timeout int, handler *RabbitHandler) erro
 	return amqp.Error{}
 }
 
-func handleMessages(channel *amqp.Channel, handler *RabbitHandler) {
+func handleMessages(channel *amqp.Channel, handler RabbitHandler) {
 	var forever chan struct {};
 	log.Info("Starting to listen for messages")
 	msgs, _ := channel.Consume(
@@ -69,8 +82,8 @@ func handleMessages(channel *amqp.Channel, handler *RabbitHandler) {
 		nil,
 	)
 	go func() {
-                for range msgs {
-			log.Info("Received a message")
+		for msg := range msgs {
+			go handler.OnMessage(msg)
 		}
 	}()
 

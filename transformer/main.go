@@ -9,6 +9,6 @@ import (
 
 func main() {
 	log.Info("Starting image transformer")
-	err := rabbit.InitRabbitConnection(5, 10, nil);
+	err := rabbit.InitRabbitConnection(5, 10, &rabbit.DefaultHandler{});
 	utils.PanicOnError(err, "Something went horribly wrong")
 }
